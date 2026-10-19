@@ -3,10 +3,10 @@
 # Produkcyjne zależności są w requirements.txt (używane w obrazie Docker).
 -r requirements.txt
 
-ruff==0.15.20
+ruff==0.17.1
 mypy==1.13.0
 django-stubs[compatible-mypy]==5.2.9
-coverage==7.6.9
+coverage==7.16.2
 pytest==9.1.1
 pytest-django==4.14.0
 mutmut==3.8.0
@@ -15,4 +15,4 @@ bandit==1.9.4
 
 # tools/record_video.py (film na YouTube); przeglądarka: `playwright install chromium`
 # albo --chromium <ścieżka>. Wymaga też ffmpeg/ffprobe w PATH.
-playwright==1.63.0
+playwright==1.64.0
