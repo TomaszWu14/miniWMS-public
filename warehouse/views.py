@@ -1319,6 +1319,7 @@ def user_edit(request, pk):
                 user.is_active = form.cleaned_data["is_active"]
                 new_pw = form.cleaned_data.get("new_password")
                 if new_pw:
+                    # nosemgrep: unvalidated-password — walidacja w UserEditForm
                     user.set_password(new_pw)
                 user.save()
                 messages.success(request, f"Zaktualizowano {user.username}.")

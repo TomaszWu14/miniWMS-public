@@ -109,6 +109,7 @@
     <ul class="plan">
       {% for p in today_plan %}
       <li>
+        {# nosemgrep: var-in-href — p.url budowany przez reverse() w widoku #}
         <a class="plan-item plan-{{ p.kind }}" href="{{ p.url }}">
           <span class="plan-tag">{{ p.tag }}</span>
           <strong>{{ p.title }}</strong>

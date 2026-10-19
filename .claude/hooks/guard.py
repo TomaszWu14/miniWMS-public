@@ -22,8 +22,9 @@ RM_RE = re.compile(r"(?:^|[\s;&|(])rm\s+((?:-[A-Za-z]+\s+|--[a-z-]+\s+)*)([^;&|]
 PS_RM_RE = re.compile(
     r"(?:Remove-Item|\brm\b|\bri\b|\bdel\b|\brmdir\b)[^;|]*-Recurse([^;|]*)", re.I
 )
+# Bandit B108: to wzorce ścieżek do porównania, hook nie tworzy plików tymczasowych.
 TEMP_MARKERS = (
-    "/tmp/",
+    "/tmp/",  # nosec B108
     "\\temp\\",
     "/temp/",
     "$tmpdir",
@@ -125,8 +126,9 @@ def _is_temp_or_cache(target: str) -> bool:
     t = target.strip("\"'").replace("\\", "/").lower()
     if any(m.replace("\\", "/") in t + "/" for m in TEMP_MARKERS):
         return True
+    # Bandit B108: tylko porównanie ścieżek, bez tworzenia plików tymczasowych.
     if "/appdata/local/temp/" in t + "/" or t.startswith(
-        ("/tmp", "$tmpdir", "${tmpdir")
+        ("/tmp", "$tmpdir", "${tmpdir")  # nosec B108
     ):
         return True
     return PurePath(t.rstrip("/")).name in CACHE_NAMES

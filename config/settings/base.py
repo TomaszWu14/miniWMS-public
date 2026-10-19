@@ -70,6 +70,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Permissions-Policy + no-store dla JSON (config/middleware.py).
+    "config.middleware.SecurityHeadersMiddleware",
     # WhiteNoise serwuje pliki statyczne bez osobnego serwera (nginx).
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

@@ -1,4 +1,5 @@
 # Cotygodniowe PR-y z aktualizacjami zależności (Dependabot).
+# Grupy minor+patch ograniczają liczbę PR-ów; major osobno (może wymagać zmian w kodzie).
 version: 2
 updates:
   - package-ecosystem: pip
@@ -8,6 +9,7 @@ updates:
     groups:
       pip:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -16,3 +18,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]

@@ -113,6 +113,7 @@ class Command(BaseCommand):
         ]
         tables = ", ".join(connection.ops.quote_name(m._meta.db_table) for m in models)
         with connection.cursor() as cur:
+            # nosemgrep: formatted-sql-query, sqlalchemy-execute-raw-query — nazwy z modeli
             cur.execute(f"LOCK TABLE {tables} IN EXCLUSIVE MODE")  # noqa: S608 (nazwy z modeli)
 
     def _reset(self, keep_users=False):

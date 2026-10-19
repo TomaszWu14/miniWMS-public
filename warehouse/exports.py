@@ -21,6 +21,7 @@ def rows_to_csv_response(filename: str, header, rows):
 
     buffer = io.StringIO()
     buffer.write("﻿")  # BOM, aby Excel poprawnie odczytał polskie znaki
+    # nosemgrep: use-defusedcsv — komórki zabezpiecza _safe_cell (formula injection)
     writer = csv.writer(buffer, delimiter=";")
     writer.writerow(header)
     for row in rows:
