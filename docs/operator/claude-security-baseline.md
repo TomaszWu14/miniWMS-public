@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Branch | `claude/security-baseline` |
-| PR | jeszcze nie utworzony |
+| PR | `#29` |
 | Data | 2026-10-19 |
 | Ryzyko | niskie — nowe nagłówki HTTP i bramki CI; brak migracji i zmian w logice magazynu |
 
