@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # --- Etap 1: builder — instalacja zależności do izolowanego venv ------------
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -15,7 +15,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 
 # --- Etap 2: runtime — chudy obraz produkcyjny, bez narzędzi budowania ------
-FROM python:3.11-slim AS runtime
+FROM python:3.14-slim AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
