@@ -950,7 +950,7 @@ class SecurityTests(BaseSetup):
 
     def setUp(self):
         super().setUp()
-        self.user.set_password("Sekret123!")
+        self.user.set_password("Sekret123!")  # nosemgrep: unvalidated-password
         self.user.save()
         Profile.objects.filter(user=self.user).update(role=Role.ADMIN)
 
@@ -1008,7 +1008,7 @@ class SecurityTests(BaseSetup):
             {
                 "username": "mocny",
                 "email": "",
-                "password": "BardzoTajne123",
+                "password": "BardzoTajne123",  # nosemgrep: generic-api-key gitleaks:allow
                 "role": Role.OPERATOR,
             },
         )
@@ -1022,7 +1022,7 @@ class SecurityTests(BaseSetup):
             {
                 "username": "zly login!",
                 "email": "",
-                "password": "BardzoTajne123",
+                "password": "BardzoTajne123",  # nosemgrep: generic-api-key gitleaks:allow
                 "role": Role.OPERATOR,
             },
         )

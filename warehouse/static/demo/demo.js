@@ -171,6 +171,7 @@
     var target = step.url || state.visited[i];
     if (target && !samePath(target)) {
       save();
+      // nosemgrep: js-open-redirect-from-function — cel ze statycznego demo_script.json lub location.pathname
       location.href = target;
       return;
     }

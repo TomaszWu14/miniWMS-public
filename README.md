@@ -98,6 +98,19 @@ struktura kodu: [docs/wdrozenie.md](docs/wdrozenie.md).
 | **Docker Compose + Caddy / Coolify** | jedno polecenie na serwerze, automatyczny HTTPS (wymagany przez kamerę) |
 | **GitHub Actions** | testy, lint, kontrola migracji i konfiguracji produkcyjnej przy każdej zmianie |
 
+## Bezpieczeństwo
+
+Każdy PR do `main` przechodzi bramki z [`security.yml`](.github/workflows/security.yml)
+(te same skany co miesiąc na całym repozytorium):
+
+- **gitleaks** — sekrety w commitach (wyjątki: `.gitleaksignore`),
+- **Bandit** i **Semgrep** (`p/owasp-top-ten`) — statyczna analiza kodu,
+- **Trivy** i **pip-audit** — podatności zależności i konfiguracji (HIGH/CRITICAL z poprawką),
+- **Dependabot** — cotygodniowe aktualizacje pip, obrazu Dockera i akcji GitHub.
+
+Aplikacja wysyła nagłówki bezpieczeństwa (m.in. `X-Frame-Options`, `Permissions-Policy`,
+HSTS za HTTPS, `no-store` dla JSON). Zgłaszanie podatności: [SECURITY.md](SECURITY.md).
+
 ## Zakres i ograniczenia
 
 W zakresie: przyjęcia z etykietami, rozmieszczanie, wydania z doborem palet według daty
