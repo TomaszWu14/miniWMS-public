@@ -2,6 +2,10 @@
 
 # miniWMS
 
+[![ci](https://github.com/TomaszWu14/miniWMS-public/actions/workflows/ci.yml/badge.svg)](https://github.com/TomaszWu14/miniWMS-public/actions/workflows/ci.yml)
+
+🇵🇱 Polski · 🇬🇧 [English version](README.en.md)
+
 **Porządkuje przepływ materiałów w małym magazynie, który do tej pory prowadził ewidencję na
 kartce papieru — dla magazynierów i kierowników.**
 
@@ -82,8 +86,6 @@ Bez `DEMO_MODE` aplikacja startuje z pustą bazą — konto administratora:
 `python manage.py createsuperuser`. Testy: `pip install -r requirements-dev.txt` i
 `python -m pytest -q`. Wdrożenie na serwer (Docker, Coolify), zmienne środowiskowe i
 struktura kodu: [docs/wdrozenie.md](docs/wdrozenie.md).
-
-[![ci](https://github.com/TomaszWu14/miniWMS-public/actions/workflows/ci.yml/badge.svg)](https://github.com/TomaszWu14/miniWMS-public/actions/workflows/ci.yml)
 
 ## Stack i dlaczego taki
 
