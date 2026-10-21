@@ -22,9 +22,11 @@ jobs:
           cache: pip
 
       - name: Install dev tooling
+        # Wersja ruff z requirements-dev.txt — Dependabot podbija ją tam, więc CI i
+        # lokalne hooki używają zawsze tej samej (bez rozjazdu formatowania).
         run: |
           python -m pip install --upgrade pip
-          pip install ruff==0.15.20
+          grep -E '^ruff==' requirements-dev.txt | xargs pip install
 
       - name: Ruff lint
         run: ruff check .
@@ -53,7 +55,7 @@ jobs:
 
       - name: Type check (mypy — warstwa logiki)
         run: |
-          pip install mypy==1.13.0 "django-stubs[compatible-mypy]==5.2.9"
+          grep -E '^(mypy|django-stubs)' requirements-dev.txt | xargs pip install
           mypy warehouse/services.py config/log.py config/urls.py
 
       - name: Production deploy check
