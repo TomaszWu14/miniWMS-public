@@ -35,14 +35,21 @@ jobs:
         run: ruff format --check .
 
   test:
+    # 3.11 = wersja z obrazu Dockera (produkcja); 3.14 = najnowsza, sprawdzana z wyprzedzeniem.
+    # Przebieg 3.11 zachowuje nazwę „test" (wymagany check), 3.14 to „test (Python 3.14)".
+    name: ${{ matrix.python-version == '3.11' && 'test' || format('test (Python {0})', matrix.python-version) }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.14"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           cache: pip
 
       - name: Install dependencies
