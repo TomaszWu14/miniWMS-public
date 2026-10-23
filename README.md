@@ -9,13 +9,15 @@
 **Porządkuje przepływ materiałów w małym magazynie, który do tej pory prowadził ewidencję na
 kartce papieru — dla magazynierów i kierowników.**
 
+▶ **Zobacz demo: <https://miniwms.twapp.pl/demo/>** (przy wejściu demo poprosi o imię, nazwisko i firmę)
+
 ![Rozmieszczanie palety skanerem w telefonie: skan palety, skan miejsca, potwierdzenie](docs/screenshots/demo.gif)
 
 📹 [Prezentacja działania — 3 min, z napisami](docs/video/youtube/miniwms-youtube.mp4)
 · [krótsza wersja — 2 min](docs/video/miniwms-demo.mp4)
 
-🌐 **Demo online bez logowania: <https://miniwms.twapp.pl/demo/>** — od razu w aplikacji,
-z 3-minutową prezentacją. Na ekranie logowania jest też **„Wejdź jako demo”**; można się
+🌐 **Demo online: <https://miniwms.twapp.pl/demo/>** — po krótkim przedstawieniu się od razu
+w aplikacji, z 3-minutową prezentacją. Na ekranie logowania jest też **„Wejdź jako demo”**; można się
 zalogować: `demo_operator` (Operator) lub `demo_podglad` (Podgląd), hasło `demo1234`.
 Dane są fikcyjne i wracają do stanu początkowego codziennie o 3:00, a od razu — przyciskiem
 **„Przywróć dane demo”** w banerze. Można klikać śmiało.

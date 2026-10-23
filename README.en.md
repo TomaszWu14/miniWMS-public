@@ -9,13 +9,15 @@
 **Brings order to material flow in a small warehouse that used to keep its records on paper —
 for warehouse operators and their managers.**
 
+▶ **See the demo: <https://miniwms.twapp.pl/demo/>** (on entry the demo asks for your first name, last name and company)
+
 ![Putting a pallet away with a phone scanner: scan pallet, scan location, confirm](docs/screenshots/demo.gif)
 
 📹 [Walkthrough video — 3 min, Polish captions](docs/video/youtube/miniwms-youtube.mp4)
 · [shorter version — 2 min](docs/video/miniwms-demo.mp4)
 
-🌐 **Live demo, no sign-up: <https://miniwms.twapp.pl/demo/>** — opens straight into the app
-with a 3-minute guided tour. The login screen also has a **“Wejdź jako demo”** (enter as demo)
+🌐 **Live demo: <https://miniwms.twapp.pl/demo/>** — after a quick introduction it opens straight
+into the app with a 3-minute guided tour. The login screen also has a **“Wejdź jako demo”** (enter as demo)
 button, or log in as `demo_operator` (Operator) or `demo_podglad` (read-only), password
 `demo1234`. All data is fictional and resets every night at 3:00, or immediately with the
 **“Przywróć dane demo”** (restore demo data) button in the banner. Click around freely.
