@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from . import scanner_views, views
+from . import scanner_views, views, visitor_gate
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
@@ -109,6 +109,7 @@ urlpatterns = [
     # Użytkownicy (Admin)
     path("uzytkownicy/", views.user_list, name="user_list"),
     path("uzytkownicy/dziennik/", views.login_log, name="login_log"),
+    path("odwiedzajacy/", visitor_gate.visitor_list, name="visitor_list"),
     path("uzytkownicy/nowy/", views.user_create, name="user_create"),
     path("uzytkownicy/<int:pk>/", views.user_edit, name="user_edit"),
 ]

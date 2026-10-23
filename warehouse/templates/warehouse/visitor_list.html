@@ -1,0 +1,33 @@
+{% extends "warehouse/base.html" %}
+{% block title %}Odwiedzający demo — mini-WMS{% endblock %}
+{% block content %}
+<h1>Odwiedzający demo</h1>
+<div class="toolbar">
+  <a class="btn btn-secondary" href="{% url 'user_list' %}">← Użytkownicy</a>
+</div>
+<p class="muted">Dane są usuwane automatycznie po {{ retention }} dniach.</p>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Kiedy</th><th>Imię</th><th>Nazwisko</th><th>Firma</th></tr></thead>
+  <tbody>
+    {% for v in visitors %}
+      <tr>
+        <td class="nowrap">{{ v.created_at|date:"Y-m-d H:i" }}</td>
+        <td>{{ v.first_name }}</td><td>{{ v.last_name }}</td><td>{{ v.company }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="muted">Brak wpisów.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if page_obj.paginator.num_pages > 1 %}
+<div class="toolbar" style="margin-top:12px">
+  {% if page_obj.has_previous %}<a class="btn btn-sm btn-secondary" href="?page={{ page_obj.previous_page_number }}">← Nowsze</a>{% endif %}
+  <div class="spacer"></div>
+  <span class="muted">Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
+  <div class="spacer"></div>
+  {% if page_obj.has_next %}<a class="btn btn-sm btn-secondary" href="?page={{ page_obj.next_page_number }}">Starsze →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

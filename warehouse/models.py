@@ -1,5 +1,7 @@
 """Modele danych mini-WMS."""
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -536,3 +538,30 @@ class LoginEvent(models.Model):
 
     def __str__(self):
         return f"{self.get_kind_display()} {self.username} ({self.created_at:%Y-%m-%d %H:%M})"
+
+
+class DemoVisitor(models.Model):
+    """Osoba, która przedstawiła się przed wejściem do demo (RODO: 90 dni).
+
+    Celowo bez IP i user-agenta — tylko to, co odwiedzający sam wpisał.
+    """
+
+    RETENTION_DAYS = 90
+
+    first_name = models.CharField("imię", max_length=100)
+    last_name = models.CharField("nazwisko", max_length=100)
+    company = models.CharField("firma", max_length=100)
+    created_at = models.DateTimeField("kiedy", default=timezone.now)
+
+    class Meta:
+        verbose_name = "odwiedzający demo"
+        verbose_name_plural = "odwiedzający demo"
+        ordering = ["-created_at", "-id"]
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.company})"
+
+    @classmethod
+    def purge_old(cls) -> int:
+        cutoff = timezone.now() - timedelta(days=cls.RETENTION_DAYS)
+        return cls.objects.filter(created_at__lt=cutoff).delete()[0]

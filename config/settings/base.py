@@ -49,6 +49,8 @@ if DEMO_MODE:
 DEMO_USER = os.environ.get("DEMO_USER", "demo_operator")
 DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "demo1234")
 DEMO_IMPORT_MAX_ROWS = 500
+# Bramka „przedstaw się” przed wejściem do demo (działa tylko przy DEMO_MODE).
+DEMO_VISITOR_GATE = env_bool("DEMO_VISITOR_GATE", True)
 
 # Liczba zaufanych proxy przed aplikacją (Traefik/Caddy = 1). 0 = nagłówek
 # X-Forwarded-For jest ignorowany, IP klienta to REMOTE_ADDR. Od tego zależy

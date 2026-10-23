@@ -3,6 +3,7 @@
 from django.contrib import admin
 
 from .models import (
+    DemoVisitor,
     HandlingUnit,
     HUNumberingConfig,
     IssueDocument,
@@ -156,3 +157,9 @@ class LoginEventAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
+
+
+@admin.register(DemoVisitor)
+class DemoVisitorAdmin(admin.ModelAdmin):
+    list_display = ("created_at", "first_name", "last_name", "company")
+    ordering = ("-created_at",)

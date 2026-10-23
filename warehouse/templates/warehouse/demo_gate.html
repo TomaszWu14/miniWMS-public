@@ -1,0 +1,34 @@
+{% extends "warehouse/base.html" %}
+{% block title %}Przedstaw się — mini-WMS{% endblock %}
+{% block anon %}
+<div class="login-wrap">
+  <div class="login-card">
+    <h1 class="login-brand"><span><span class="brand-accent">mini</span>WMS</span></h1>
+    <p class="login-sub">Wersja demonstracyjna</p>
+    <p>Zanim wejdziesz do wersji demonstracyjnej, przedstaw się, proszę.</p>
+    {% if form.errors %}<div class="msg msg-error" role="alert">Uzupełnij poprawnie zaznaczone pola.</div>{% endif %}
+    <form method="post" action="{% url 'visitor_gate' %}">
+      {% csrf_token %}
+      <input type="hidden" name="flow" value="{{ flow }}">
+      <input type="hidden" name="next" value="{{ next }}">
+      {% for f in form.visible_fields %}{% if f.name != "website" and f.name != "consent" %}
+      <div class="field">
+        <label for="{{ f.id_for_label }}">{{ f.label }}</label>
+        <input type="text" name="{{ f.html_name }}" id="{{ f.id_for_label }}" value="{{ f.value|default_if_none:'' }}" minlength="2" maxlength="100" required{% if forloop.first %} autofocus{% endif %}>
+        {% for e in f.errors %}<div class="muted" style="color:var(--err)">{{ e }}</div>{% endfor %}
+      </div>
+      {% endif %}{% endfor %}
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label for="id_website">Nie wypełniaj tego pola</label>
+        <input type="text" name="website" id="id_website" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="field">
+        <label><input type="checkbox" name="consent" required{% if form.consent.value %} checked{% endif %}> {{ form.consent.label }}</label>
+        {% for e in form.consent.errors %}<div class="muted" style="color:var(--err)">{{ e }}</div>{% endfor %}
+      </div>
+      <button class="btn" type="submit" style="width:100%">Wchodzę</button>
+    </form>
+    <p class="muted" style="margin-top:16px;font-size:.85em">Administratorem danych jest Tomasz Wierzbowski (kontakt: tomasz.wierzbowski@op.pl). Imię, nazwisko i nazwę firmy przetwarzam wyłącznie w celu kontroli dostępu do wersji demonstracyjnej i statystyki odwiedzin portfolio, na podstawie prawnie uzasadnionego interesu (art. 6 ust. 1 lit. f RODO). Dane przechowuję 90 dni, potem są automatycznie usuwane, i nikomu ich nie przekazuję. Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania i sprzeciwu – napisz na adres powyżej. Przysługuje Ci skarga do Prezesa UODO.</p>
+  </div>
+</div>
+{% endblock %}

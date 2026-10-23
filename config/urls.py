@@ -14,6 +14,7 @@ from warehouse.demo import (
     demo_start,
     welcome_dismiss,
 )
+from warehouse.visitor_gate import visitor_gate
 
 admin.site.site_header = "mini-WMS — administracja"
 admin.site.site_title = "mini-WMS"
@@ -39,6 +40,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("login/demo/", demo_login, name="demo_login"),
     path("demo/", demo_start, name="demo_start"),
+    path("demo/przedstaw-sie/", visitor_gate, name="visitor_gate"),
     path("demo/przywroc/", demo_reset, name="demo_reset"),
     path("powitanie/ukryj/", welcome_dismiss, name="welcome_dismiss"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),

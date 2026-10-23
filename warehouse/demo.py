@@ -22,6 +22,7 @@ from django.views.decorators.http import require_GET, require_POST
 from .models import Role
 from .roles import operator_required
 from .signals import _client_ip
+from .visitor_gate import gate_enabled, gate_passed, gate_redirect
 
 # Hasło: settings.DEMO_PASSWORD (env, domyślnie jawne „demo1234” z README).
 DEMO_ACCOUNTS = {
@@ -72,6 +73,12 @@ class LoginView(auth_views.LoginView):
                 status=429,
                 content_type="text/plain; charset=utf-8",
             )
+        if (
+            gate_enabled()
+            and request.POST.get("username", "").strip() in DEMO_ACCOUNTS
+            and not gate_passed(request)
+        ):
+            return gate_redirect(request, "manual")
         return super().post(request, *args, **kwargs)
 
 
@@ -82,22 +89,29 @@ def _demo_user():
     return User.objects.filter(username=settings.DEMO_USER, is_active=True).first()
 
 
-@require_POST
-def demo_login(request):
-    """„Wejdź jako demo” — loguje kontem settings.DEMO_USER bez wpisywania hasła."""
-    if not settings.DEMO_MODE:
-        raise Http404
+def demo_enter(request, target: str = ""):
+    """Loguje kontem demo i przekierowuje na bezpieczny `target` (albo pulpit)."""
     user = _demo_user()
     if user is None:
         messages.error(request, "Konto demo nie jest jeszcze utworzone (seed_demo).")
         return redirect("login")
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-    target = request.POST.get("next", "")
     if not url_has_allowed_host_and_scheme(
         target, allowed_hosts={request.get_host()}, require_https=request.is_secure()
     ):
         target = "dashboard"
     return redirect(target)
+
+
+@require_POST
+def demo_login(request):
+    """„Wejdź jako demo” — loguje kontem settings.DEMO_USER bez wpisywania hasła."""
+    if not settings.DEMO_MODE:
+        raise Http404
+    target = request.POST.get("next", "")
+    if gate_enabled() and not gate_passed(request):
+        return gate_redirect(request, "button", target)
+    return demo_enter(request, target)
 
 
 @require_GET
@@ -111,6 +125,8 @@ def demo_start(request):
     if not settings.DEMO_MODE:
         raise Http404
     if not request.user.is_authenticated:
+        if gate_enabled() and not gate_passed(request):
+            return gate_redirect(request, "start")
         user = _demo_user()
         if user is None:
             messages.error(

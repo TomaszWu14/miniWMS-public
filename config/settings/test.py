@@ -7,3 +7,6 @@ testów. Tylko testy — nigdy nie importować tego modułu w dev/prod.
 from .dev import *  # noqa: F401,F403
 
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# Bramka odwiedzających demo wyłączona; testy bramki włączają ją override_settings.
+DEMO_VISITOR_GATE = False
