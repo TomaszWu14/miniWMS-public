@@ -4,7 +4,9 @@ Działa tylko przy DEMO_MODE i DEMO_VISITOR_GATE. Chroni wejścia na konta demo
 („Wejdź jako demo”, /demo/, ręczne logowanie na demo_*) — zwykłe konta,
 /healthz, /login/ i statyki zostają bez zmian.
 Znacznik „przedstawił się” to podpisane ciasteczko na 30 dni (nie sesja —
-ta wygasa po 30 min bezczynności).
+ta wygasa po 30 min bezczynności) z id wpisu (`id:<pk>`) — po nim
+`visitor_activity.py` liczy obejrzane ekrany. Starsza wartość `1` (bez id)
+nadal wpuszcza, tylko aktywność nie jest liczona.
 """
 
 import unicodedata
@@ -25,17 +27,32 @@ from .visitor_notify import notify_new_visitor
 
 COOKIE_NAME = "demo_visitor"
 COOKIE_MAX_AGE = int(timedelta(days=30).total_seconds())
+COOKIE_ID_PREFIX = "id:"
 
 
 def gate_enabled() -> bool:
     return bool(settings.DEMO_MODE and settings.DEMO_VISITOR_GATE)
 
 
+def _cookie_value(request: HttpRequest) -> str | None:
+    return request.get_signed_cookie(COOKIE_NAME, default=None, max_age=COOKIE_MAX_AGE)
+
+
 def gate_passed(request: HttpRequest) -> bool:
-    return (
-        request.get_signed_cookie(COOKIE_NAME, default=None, max_age=COOKIE_MAX_AGE)
-        == "1"
-    )
+    value = _cookie_value(request)
+    return value == "1" or visitor_id_from(value) is not None
+
+
+def visitor_id_from(value: str | None) -> int | None:
+    if not value or not value.startswith(COOKIE_ID_PREFIX):
+        return None
+    raw = value[len(COOKIE_ID_PREFIX) :]
+    return int(raw) if raw.isascii() and raw.isdigit() else None
+
+
+def visitor_id(request: HttpRequest) -> int | None:
+    """Id wpisu gościa z podpisanego ciasteczka (None: brak, stara flaga, podróbka)."""
+    return visitor_id_from(_cookie_value(request))
 
 
 def gate_redirect(request: HttpRequest, flow: str, next_url: str = ""):
@@ -111,7 +128,7 @@ def visitor_gate(request: HttpRequest) -> HttpResponse:
                 response = redirect("login")
             response.set_signed_cookie(
                 COOKIE_NAME,
-                "1",
+                f"{COOKIE_ID_PREFIX}{visitor.pk}",
                 max_age=COOKIE_MAX_AGE,
                 httponly=True,
                 samesite="Lax",

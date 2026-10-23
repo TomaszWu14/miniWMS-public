@@ -55,6 +55,12 @@ DEMO_VISITOR_GATE = env_bool("DEMO_VISITOR_GATE", True)
 # (np. https://ntfy.sh/<tajny-temat>); puste = wyłączone. Token opcjonalny.
 NTFY_URL = os.environ.get("NTFY_URL", "").strip()
 NTFY_TOKEN = os.environ.get("NTFY_TOKEN", "").strip()
+# Frazy (po przecinku) firm, których wizyta ma alarmować: push „urgent”.
+# Prawdziwe nazwy tylko w env (Coolify), nigdy w repo.
+NTFY_WATCH_COMPANIES = os.environ.get("NTFY_WATCH_COMPANIES", "").strip()
+# Jeden push, gdy gość obejrzy dokładnie tyle ekranów demo; 0 = wyłączone.
+_engaged = os.environ.get("NTFY_ENGAGED_VIEWS", "10").strip()
+NTFY_ENGAGED_VIEWS = int(_engaged) if _engaged.isdigit() else 10
 
 # Liczba zaufanych proxy przed aplikacją (Traefik/Caddy = 1). 0 = nagłówek
 # X-Forwarded-For jest ignorowany, IP klienta to REMOTE_ADDR. Od tego zależy
@@ -87,6 +93,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Licznik ekranów gościa demo (tylko przy bramce; warehouse/visitor_activity.py).
+    "warehouse.visitor_activity.VisitorActivityMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"

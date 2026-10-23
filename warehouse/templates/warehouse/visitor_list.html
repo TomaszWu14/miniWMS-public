@@ -8,15 +8,18 @@
 <p class="muted">Dane są usuwane automatycznie po {{ retention }} dniach.</p>
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Kiedy</th><th>Imię</th><th>Nazwisko</th><th>Firma</th></tr></thead>
+  <thead><tr><th>Kiedy</th><th>Imię</th><th>Nazwisko</th><th>Firma</th><th class="text-right">Ekrany</th><th>Czas</th><th>Najczęściej</th></tr></thead>
   <tbody>
     {% for v in visitors %}
       <tr>
         <td class="nowrap">{{ v.created_at|date:"Y-m-d H:i" }}</td>
         <td>{{ v.first_name }}</td><td>{{ v.last_name }}</td><td>{{ v.company }}</td>
+        <td class="text-right">{{ v.page_views }}</td>
+        <td class="nowrap">{{ v.visit_label }}</td>
+        <td>{% for name, count in v.top_sections %}{{ name }} ({{ count }}){% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td>
       </tr>
     {% empty %}
-      <tr><td colspan="4" class="muted">Brak wpisów.</td></tr>
+      <tr><td colspan="7" class="muted">Brak wpisów.</td></tr>
     {% endfor %}
   </tbody>
 </table>
