@@ -21,6 +21,7 @@ from django.views.decorators.http import require_http_methods
 
 from .models import DemoVisitor
 from .roles import admin_required
+from .visitor_notify import notify_new_visitor
 
 COOKIE_NAME = "demo_visitor"
 COOKIE_MAX_AGE = int(timedelta(days=30).total_seconds())
@@ -93,11 +94,12 @@ def visitor_gate(request: HttpRequest) -> HttpResponse:
         form = VisitorForm(request.POST)
         if form.is_valid():
             DemoVisitor.purge_old()
-            DemoVisitor.objects.create(
+            visitor = DemoVisitor.objects.create(
                 first_name=form.cleaned_data["first_name"],
                 last_name=form.cleaned_data["last_name"],
                 company=form.cleaned_data["company"],
             )
+            notify_new_visitor(visitor.first_name, visitor.last_name, visitor.company)
             if flow == "button":
                 response = demo_enter(request, next_url)
             elif flow == "start":

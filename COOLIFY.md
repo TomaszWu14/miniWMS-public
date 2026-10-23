@@ -190,6 +190,11 @@ z własną bazą, nigdy na danych produkcyjnych.
    500 wierszy i wysyła maile tylko do konsoli. Limit logowań (10 prób / 5 min / IP)
    działa zawsze, także bez trybu demo. Opcjonalnie: `DEMO_USER` (konto przycisku,
    domyślnie `demo_operator`) i `DEMO_PASSWORD` (domyślnie `demo1234`).
+   Opcjonalnie powiadomienie push na telefon (aplikacja **ntfy**) o każdym gościu, który
+   przedstawi się w bramce demo: `NTFY_URL` — pełny URL tematu, np.
+   `https://ntfy.sh/<tajny-temat>` (temat trudny do zgadnięcia; zasubskrybuj go w aplikacji),
+   oraz `NTFY_TOKEN` — tylko dla serwera ntfy z kontrolą dostępu (nagłówek `Bearer`).
+   Bez `NTFY_URL` nic nie jest wysyłane.
 2. Po pierwszym deployu zasiej dane (terminal kontenera `web` w Coolify):
    `python manage.py seed_demo`
 3. **Reset co 24 h** — zakładka zasobu **Scheduled Tasks → + Add**:
