@@ -53,6 +53,9 @@ class VisitorGateTests(TestCase):
         resp = self.client.get("/demo/przedstaw-sie/")
         self.assertContains(resp, "Zanim wejdziesz do wersji demonstracyjnej")
         self.assertContains(resp, "art. 6 ust. 1 lit. f RODO")
+        # adres kontaktowy ukryty przed botami zbierającymi adresy
+        self.assertContains(resp, "tomasz.wierzbowski [at] op.pl")
+        self.assertNotContains(resp, "tomasz.wierzbowski@op.pl")
         self.assertEqual(self.client.get("/login/").status_code, 200)
         self.assertEqual(self.client.get("/healthz").status_code, 200)
 
