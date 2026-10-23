@@ -18,7 +18,7 @@
   Ciasteczko, nie sesja — sesja wygasa po 30 min bezczynności.
 - Lista odwiedzających (najnowsi pierwsi) dla administratora: `/odwiedzajacy/` (przycisk
   „Odwiedzający demo” w Użytkownicy) oraz Django admin (poza trybem demo, gdzie admin jest wyłączony).
-- Przełącznik `DEMO_VISITOR_GATE` (domyślnie włączony; działa tylko przy `DEMO_MODE=1`).
+- Przełącznik `DEMO_VISITOR_GATE` (domyślnie włączony na produkcji, `DJANGO_DEBUG=0`; lokalnie i w CI wyłączony; działa tylko przy `DEMO_MODE=1`).
 - „Przywróć dane demo” (`seed_demo --reset`) nie rusza tabeli odwiedzających.
 - Nie blokowane: `/healthz`, `/login/`, statyki, zwykłe konta.
 
