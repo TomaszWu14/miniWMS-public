@@ -552,6 +552,10 @@ class DemoVisitor(models.Model):
     last_name = models.CharField("nazwisko", max_length=100)
     company = models.CharField("firma", max_length=100)
     created_at = models.DateTimeField("kiedy", default=timezone.now)
+    # Aktywność po wejściu (visitor_activity.py): ekrany HTML, bez IP.
+    page_views = models.PositiveIntegerField("obejrzane ekrany", default=0)
+    last_seen_at = models.DateTimeField("ostatnio widziany", null=True, blank=True)
+    sections = models.JSONField("sekcje", default=dict, blank=True)
 
     class Meta:
         verbose_name = "odwiedzający demo"
@@ -560,6 +564,19 @@ class DemoVisitor(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.company})"
+
+    @property
+    def visit_label(self) -> str:
+        """Czas wizyty: „ok. N min” (od wpisu do ostatniego ekranu) albo „—”."""
+        if not self.last_seen_at:
+            return "—"
+        seconds = (self.last_seen_at - self.created_at).total_seconds()
+        return f"ok. {max(1, round(seconds / 60))} min"
+
+    @property
+    def top_sections(self) -> list[tuple[str, int]]:
+        items = (self.sections or {}).items()
+        return sorted(items, key=lambda kv: (-kv[1], kv[0]))[:3]
 
     @classmethod
     def purge_old(cls) -> int:

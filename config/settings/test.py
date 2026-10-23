@@ -14,3 +14,4 @@ DEMO_VISITOR_GATE = False
 # Zero ruchu sieciowego w testach — testy powiadomień ustawiają URL i mockują HTTP.
 NTFY_URL = ""
 NTFY_TOKEN = ""
+NTFY_WATCH_COMPANIES = ""

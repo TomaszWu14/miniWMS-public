@@ -94,7 +94,54 @@ class VisitorNotifyTests(TestCase):
         self.assertEqual(DemoVisitor.objects.count(), 1)
         self.assertIn("_auth_user_id", self.client.session)
 
-    def test_gate_page_mentions_ntfy(self, urlopen):
+    def test_gate_page_mentions_ntfy_and_activity(self, urlopen):
         resp = self.client.get("/demo/przedstaw-sie/")
-        self.assertContains(resp, "przez usługę powiadomień push ntfy")
-        self.assertNotContains(resp, "i nikomu ich nie przekazuję")
+        self.assertContains(
+            resp,
+            "O każdej wizycie (imię, nazwisko, firma) dostaję powiadomienie na telefon"
+            " przez usługę powiadomień push ntfy. Zapisuję też, ile i jakie ekrany"
+            " wersji demonstracyjnej obejrzałeś (bez adresu IP), żeby wiedzieć, co"
+            " zainteresowało gości. Poza tym nikomu danych nie przekazuję.",
+        )
+        self.assertNotContains(resp, "push ntfy; poza tym")
+
+    def _headers(self, urlopen):
+        req = urlopen.call_args.args[0]
+        return req, {k.lower(): v for k, v in req.header_items()}
+
+    @override_settings(NTFY_WATCH_COMPANIES="globex, acme")
+    def test_watched_company_sends_urgent_alarm(self, urlopen):
+        self._post({**GOOD, "company": "ÄCME  Sp. z o.o."})
+        urlopen.assert_called_once()
+        req, headers = self._headers(urlopen)
+        self.assertEqual(headers["priority"], "urgent")
+        self.assertEqual(headers["tags"], "rotating_light")
+        self.assertEqual(headers["title"], "UWAGA firma z listy: miniWMS")
+        headers["title"].encode("ascii")
+        self.assertEqual(
+            req.data.decode("utf-8"),
+            "⚠️ Anna Nowak (ÄCME  Sp. z o.o.) wszedł do miniWMS",
+        )
+
+    @override_settings(NTFY_WATCH_COMPANIES="Łódź")
+    def test_watch_phrase_diacritics_and_case(self, urlopen):
+        self._post({**GOOD, "company": "Hurtownia LODZ"})
+        self.assertEqual(self._headers(urlopen)[1]["priority"], "urgent")
+
+    @override_settings(NTFY_WATCH_COMPANIES="globex, initech")
+    def test_no_match_sends_normal_push(self, urlopen):
+        self._post(GOOD)
+        req, headers = self._headers(urlopen)
+        self.assertEqual(headers["priority"], "high")
+        self.assertEqual(headers["title"], "Nowy gosc: miniWMS")
+        self.assertFalse(req.data.decode("utf-8").startswith("⚠️"))
+
+    @override_settings(NTFY_WATCH_COMPANIES=" , a, ")
+    def test_empty_or_too_short_phrases_ignored(self, urlopen):
+        self._post(GOOD)
+        self.assertEqual(self._headers(urlopen)[1]["priority"], "high")
+
+    @override_settings(NTFY_WATCH_COMPANIES="acme", NTFY_URL="")
+    def test_watched_without_url_sends_nothing(self, urlopen):
+        self._post(GOOD)
+        urlopen.assert_not_called()

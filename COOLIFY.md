@@ -194,7 +194,13 @@ z własną bazą, nigdy na danych produkcyjnych.
    przedstawi się w bramce demo: `NTFY_URL` — pełny URL tematu, np.
    `https://ntfy.sh/<tajny-temat>` (temat trudny do zgadnięcia; zasubskrybuj go w aplikacji),
    oraz `NTFY_TOKEN` — tylko dla serwera ntfy z kontrolą dostępu (nagłówek `Bearer`).
-   Bez `NTFY_URL` nic nie jest wysyłane.
+   Bez `NTFY_URL` nic nie jest wysyłane. Dodatkowo (też opcjonalnie):
+   `NTFY_WATCH_COMPANIES` — frazy rozdzielone przecinkami (np. `fraza1, fraza2`); gość, którego
+   firma zawiera frazę (bez względu na wielkość liter i polskie znaki), daje push z priorytetem
+   `urgent` i tytułem „UWAGA firma z listy”; prawdziwe nazwy wpisuj tylko w Coolify.
+   `NTFY_ENGAGED_VIEWS` (domyślnie `10`, `0` = wyłączone) — jeden push „Gosc oglada demo”, gdy
+   gość obejrzy dokładnie tyle ekranów. Liczbę ekranów, czas wizyty i najczęstsze sekcje widać
+   na liście `/odwiedzajacy/` (konto administratora).
 2. Po pierwszym deployu zasiej dane (terminal kontenera `web` w Coolify):
    `python manage.py seed_demo`
 3. **Reset co 24 h** — zakładka zasobu **Scheduled Tasks → + Add**:
