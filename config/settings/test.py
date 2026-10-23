@@ -10,3 +10,7 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 # Bramka odwiedzających demo wyłączona; testy bramki włączają ją override_settings.
 DEMO_VISITOR_GATE = False
+
+# Zero ruchu sieciowego w testach — testy powiadomień ustawiają URL i mockują HTTP.
+NTFY_URL = ""
+NTFY_TOKEN = ""
