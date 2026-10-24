@@ -116,14 +116,17 @@ def parse_locations_file(filename: str, data: bytes):
         gen = _rows_from_xlsx(data)
     else:
         raise ImportError_("Obsługiwane formaty to .csv oraz .xlsx.")
-    if not settings.DEMO_MODE:
-        return list(gen)
-    # Demo: czytamy najwyżej limit+1 wierszy — mały XLSX potrafi rozpakować się
-    # do milionów wierszy, a publiczne konto demo nie może zabić procesu.
-    limit = settings.DEMO_IMPORT_MAX_ROWS
+    # Czytamy najwyżej limit+1 wierszy — mały XLSX potrafi rozpakować się do
+    # milionów wierszy (zip bomb) i zawiesić proces. Demo ma limit ostrzejszy.
+    if settings.DEMO_MODE:
+        limit = settings.DEMO_IMPORT_MAX_ROWS
+        message = f"W wersji demo import obejmuje najwyżej {limit} wierszy."
+    else:
+        limit = settings.MAX_IMPORT_ROWS
+        message = f"Plik ma za dużo wierszy — import obejmuje najwyżej {limit} wierszy."
     rows = list(islice(gen, limit + 1))
     if len(rows) > limit:
-        raise ImportError_(f"W wersji demo import obejmuje najwyżej {limit} wierszy.")
+        raise ImportError_(message)
     return rows
 
 

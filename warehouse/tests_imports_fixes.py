@@ -2,9 +2,9 @@
 
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
-from .imports import import_locations
+from .imports import ImportError_, import_locations
 from .models import Location
 
 
@@ -42,4 +42,41 @@ class LocationImportCapacityTests(TestCase):
             self.assertRaises(RuntimeError),
         ):
             import_locations("loc.csv", data)
+        self.assertEqual(Location.objects.count(), 0)
+
+
+class ImportRowLimitTests(TestCase):
+    """Limit wierszy (ochrona przed zip bombą) dla CSV i XLSX, także poza demo."""
+
+    @staticmethod
+    def _xlsx(n_rows: int) -> bytes:
+        import io
+
+        from openpyxl import Workbook
+
+        wb = Workbook()
+        ws = wb.active
+        ws.append(["kod", "typ", "pojemnosc"])
+        for i in range(n_rows):
+            ws.append([f"R-{i}", "ZAPAS", 1])
+        buf = io.BytesIO()
+        wb.save(buf)
+        return buf.getvalue()
+
+    @override_settings(DEMO_MODE=False, MAX_IMPORT_ROWS=3)
+    def test_xlsx_over_limit_rejected_and_nothing_saved(self):
+        with self.assertRaisesMessage(ImportError_, "najwyżej 3 wierszy"):
+            import_locations("lok.xlsx", self._xlsx(4))
+        self.assertEqual(Location.objects.count(), 0)
+
+    @override_settings(DEMO_MODE=False, MAX_IMPORT_ROWS=3)
+    def test_xlsx_at_limit_accepted(self):
+        created, _, errors = import_locations("lok.xlsx", self._xlsx(3))
+        self.assertEqual((created, errors), (3, []))
+
+    @override_settings(DEMO_MODE=False, MAX_IMPORT_ROWS=2)
+    def test_csv_over_limit_rejected(self):
+        data = b"kod;typ\nA-1;ZAPAS\nA-2;ZAPAS\nA-3;ZAPAS\n"
+        with self.assertRaises(ImportError_):
+            import_locations("lok.csv", data)
         self.assertEqual(Location.objects.count(), 0)
