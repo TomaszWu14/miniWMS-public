@@ -24,6 +24,15 @@ class SecurityHeadersTests(TestCase):
         self.assertEqual(resp["X-Content-Type-Options"], "nosniff")
 
 
+class TrackingPixelTests(TestCase):
+    def test_login_page_has_portfolio_pixel(self):
+        resp = self.client.get("/login/")
+        self.assertContains(
+            resp,
+            '<img src="https://portfolio.twapp.pl/px/miniwms" alt="" width="1" height="1" hidden>',
+        )
+
+
 class SecurityHeadersMiddlewareUnitTests(SimpleTestCase):
     def test_explicit_headers_are_not_overridden(self):
         def view(request):
