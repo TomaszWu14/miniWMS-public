@@ -10,10 +10,18 @@ updates:
       pip:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+    ignore:
+      # Repo zostaje na Django 5.2 LTS — przejście na nową wersję główną to świadoma decyzja.
+      - dependency-name: "django"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    groups:
+      docker:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
