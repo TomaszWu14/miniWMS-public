@@ -1,10 +1,16 @@
 name: CI
 
 on:
+  # push tylko main: push na gałąź z PR-em odpalał CI dwa razy (push + pull_request)
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
-    branches: ["**"]
+  workflow_dispatch:
+
+# Nowy push do PR-a anuluje starszy przebieg (main zawsze do końca — od niego zależy deploy).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -12,6 +18,7 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -39,6 +46,7 @@ jobs:
     # Przebieg 3.11 zachowuje nazwę „test" (wymagany check), 3.14 to „test (Python 3.14)".
     name: ${{ matrix.python-version == '3.11' && 'test' || format('test (Python {0})', matrix.python-version) }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -84,6 +92,7 @@ jobs:
     # zapytania typu FOR UPDATE na złączeniach sprawdzi tylko prawdziwy Postgres.
     # Tu działa też warehouse.tests_concurrency_pg (na SQLite jest pomijany).
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     services:
       postgres:
         image: postgres:16-alpine
@@ -120,6 +129,7 @@ jobs:
     # non-root) ORAZ runtime (np. healthcheck z 301 przez SSL redirect) zanim
     # trafią na deploy.
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Build image
