@@ -49,6 +49,9 @@ if DEMO_MODE:
 DEMO_USER = os.environ.get("DEMO_USER", "demo_operator")
 DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "demo1234")
 DEMO_IMPORT_MAX_ROWS = 500
+# Limit wierszy każdego importu CSV/XLSX (poza demo): chroni przed zip bombą —
+# mały .xlsx może rozpakować się do milionów wierszy.
+MAX_IMPORT_ROWS = 10_000
 # Bramka „przedstaw się” przed wejściem do demo (działa tylko przy DEMO_MODE).
 DEMO_VISITOR_GATE = env_bool("DEMO_VISITOR_GATE", True)
 # Powiadomienie push (ntfy) o każdym nowym gościu demo: pełny URL tematu
