@@ -22,6 +22,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_http_methods
 
 from .models import DemoVisitor
+from .portfolio_pass import portfolio_pass_valid
 from .roles import admin_required
 from .visitor_notify import notify_new_visitor
 
@@ -40,7 +41,9 @@ def _cookie_value(request: HttpRequest) -> str | None:
 
 def gate_passed(request: HttpRequest) -> bool:
     value = _cookie_value(request)
-    return value == "1" or visitor_id_from(value) is not None
+    if value == "1" or visitor_id_from(value) is not None:
+        return True
+    return portfolio_pass_valid(request)  # przepustka z portfolio (bez zapisu gościa)
 
 
 def visitor_id_from(value: str | None) -> int | None:

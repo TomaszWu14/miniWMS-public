@@ -190,6 +190,10 @@ z własną bazą, nigdy na danych produkcyjnych.
    500 wierszy i wysyła maile tylko do konsoli. Limit logowań (10 prób / 5 min / IP)
    działa zawsze, także bez trybu demo. Opcjonalnie: `DEMO_USER` (konto przycisku,
    domyślnie `demo_operator`) i `DEMO_PASSWORD` (domyślnie `demo1234`).
+   Przepustka z portfolio: gość, który przedstawił się w portfolio (ciasteczko `gosc` na
+   `.twapp.pl`), nie widzi bramki demo — backend pyta `PORTFOLIO_URL/api/gosc` (domyślnie
+   `https://portfolio.twapp.pl`, musi być `https://`; timeout 2 s, wynik w pamięci ~10 min).
+   `PORTFOLIO_PASS=0` wyłącza sprawdzanie; błąd portfolio = zwykła bramka.
    Opcjonalnie powiadomienie push na telefon (aplikacja **ntfy**) o każdym gościu, który
    przedstawi się w bramce demo: `NTFY_URL` — pełny URL tematu, np.
    `https://ntfy.sh/<tajny-temat>` (temat trudny do zgadnięcia; zasubskrybuj go w aplikacji),
