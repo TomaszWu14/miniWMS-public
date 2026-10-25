@@ -2,6 +2,8 @@ name: Monitor demo
 
 # Co 6 godzin sprawdza publiczne demo (https://miniwms.twapp.pl): healthcheck z bazą,
 # stronę główną (przekierowanie na logowanie) i ekran logowania z „Wejdź jako demo”.
+# Za bramką portfolio (ForwardAuth, od 24.10) strony dają 401 z formularzem portfolio — to wynik
+# poprawny (treści nie sprawdzamy); /healthz musi wtedy i tak zwrócić status=ok.
 # Awaria → issue „Demo nie odpowiada” z etykietą `demo` (jedno, kolejne awarie jako
 # komentarze); pierwszy udany przebieg po awarii → issue zamknięte.
 on:
@@ -38,20 +40,43 @@ jobs:
           [ "$(jq -r '.status // empty' <<<"$health" 2>/dev/null)" = ok ] \
             || problems+=("/healthz nie zwraca status=ok: ${health:0:200}")
 
-          home=$(get -f -o /dev/null -w '%{http_code} %{url_effective}' "$DEMO_URL/") || home=''
-          case "$home" in 200\ *) ;; *) problems+=("Strona główna nie odpowiada (kod/adres: ${home:-brak odpowiedzi})");; esac
+          # Od 24.10 demo stoi za ForwardAuth portfolio: bez ciasteczka `gosc` strony dają 401
+          # z formularzem bramki (link do portfolio.twapp.pl/wejscie) — to znaczy, że bramka działa,
+          # a treści aplikacji nie widać. Dowodem życia aplikacji jest wtedy /healthz (ForwardAuth go
+          # przepuszcza). Strony pobieramy bez -f (przy 401 -f nie oddałby treści) do page.html.
+          page() { rm -f page.html; get -o page.html -w "$2" "$DEMO_URL$1" || true; }
+          bramka() { [ "$1" = 401 ] && grep -qF 'portfolio.twapp.pl/wejscie' page.html 2>/dev/null; }
+          za_bramka=''
 
-          login=$(get -f "$DEMO_URL/login/") || login=''
-          grep -q 'Wejdź jako demo' <<<"$login" \
-            || problems+=("Ekran logowania nie odpowiada albo brak przycisku „Wejdź jako demo”")
+          home=$(page / '%{http_code} %{url_effective}')
+          if [[ "$home" == 200\ * ]]; then
+            :
+          elif bramka "${home%% *}"; then
+            za_bramka=1
+          else
+            problems+=("Strona główna nie odpowiada (kod/adres: ${home:-brak odpowiedzi})")
+          fi
+
+          login=$(page /login/ '%{http_code}')
+          if [ "$login" = 200 ]; then
+            grep -q 'Wejdź jako demo' page.html \
+              || problems+=("Ekran logowania bez przycisku „Wejdź jako demo”")
+          elif bramka "$login"; then
+            za_bramka=1
+          else
+            problems+=("Ekran logowania nie odpowiada (HTTP ${login:-brak odpowiedzi})")
+          fi
+          note=''
+          [ -n "$za_bramka" ] && note=' Za bramką portfolio – sprawdzono tylko zdrowie.'
 
           if [ ${#problems[@]} -eq 0 ]; then
-            echo "Demo działa ($(date -u '+%Y-%m-%d %H:%M UTC'))." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "Demo działa ($(date -u '+%Y-%m-%d %H:%M UTC')).$note" | tee -a "$GITHUB_STEP_SUMMARY"
             echo "ok=true" >> "$GITHUB_OUTPUT"
           else
             {
               echo "Demo $DEMO_URL — problemy ($(date -u '+%Y-%m-%d %H:%M UTC')):"
               for p in "${problems[@]}"; do echo "- $p"; done
+              [ -z "$note" ] || echo "-$note"
               echo
               echo "Przebieg: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             } > report.md
