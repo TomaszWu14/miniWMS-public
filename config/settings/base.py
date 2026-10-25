@@ -54,6 +54,12 @@ DEMO_IMPORT_MAX_ROWS = 500
 MAX_IMPORT_ROWS = 10_000
 # Bramka „przedstaw się” przed wejściem do demo (działa tylko przy DEMO_MODE).
 DEMO_VISITOR_GATE = env_bool("DEMO_VISITOR_GATE", True)
+# Przepustka z portfolio: ciasteczko `gosc` ustawione przez portfolio zwalnia z bramki
+# (sprawdzane server-to-server w portfolio_pass.py). PORTFOLIO_PASS=0 wyłącza.
+PORTFOLIO_URL = (
+    os.environ.get("PORTFOLIO_URL", "").strip() or "https://portfolio.twapp.pl"
+)
+PORTFOLIO_PASS = env_bool("PORTFOLIO_PASS", True)
 # Powiadomienie push (ntfy) o każdym nowym gościu demo: pełny URL tematu
 # (np. https://ntfy.sh/<tajny-temat>); puste = wyłączone. Token opcjonalny.
 NTFY_URL = os.environ.get("NTFY_URL", "").strip()

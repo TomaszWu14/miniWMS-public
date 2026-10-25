@@ -31,6 +31,9 @@ services:
       # Konto dla „Wejdź jako demo” i hasło kont demo (publiczne, opisane w README).
       DEMO_USER: ${DEMO_USER:-demo_operator}
       DEMO_PASSWORD: ${DEMO_PASSWORD:-demo1234}
+      # Przepustka z portfolio (ciasteczko `gosc`); PORTFOLIO_PASS=0 wyłącza.
+      PORTFOLIO_URL: ${PORTFOLIO_URL:-https://portfolio.twapp.pl}
+      PORTFOLIO_PASS: ${PORTFOLIO_PASS:-1}
       # Opcjonalnie: powiadomienie push (ntfy) o każdym nowym gościu demo.
       NTFY_URL: ${NTFY_URL:-}
       NTFY_TOKEN: ${NTFY_TOKEN:-}
