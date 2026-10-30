@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 # na potrzeby budowy obrazu Docker (pip install -r requirements.txt).
 dependencies = [
     "Django>=5.2,<5.3",
-    "reportlab==5.0.1",
+    "reportlab==5.1.0",
     "qrcode[pil]==8.2",
     "openpyxl==3.1.5",
     "gunicorn==23.0.0",
@@ -17,11 +17,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.17.1",
+    "ruff==0.17.3",
     "mypy==1.13.0",
     "django-stubs==5.2.9",
-    "coverage==7.16.2",
-    "pytest==9.1.1",
+    "coverage==7.17.0",
+    "pytest==9.2.0",
     "pytest-django==4.14.0",
     "mutmut==3.8.0",
     "pip-audit==2.10.1",
